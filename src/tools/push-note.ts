@@ -31,29 +31,60 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
         .describe("Optional source context, e.g. 'Claude iOS session on PKM pipeline'"),
     },
     async ({ title, content, tags, source }) => {
-      const filePath = generateNotePath(title);
+      // Sanitize inputs
+      const cleanTitle = title.trim();
+      const cleanContent = content.trim();
+
+      if (cleanTitle.length === 0) {
+        return {
+          content: [{ type: "text" as const, text: "Title cannot be empty or whitespace only." }],
+          isError: true,
+        };
+      }
+
+      if (cleanContent.length === 0) {
+        return {
+          content: [{ type: "text" as const, text: "Content cannot be empty or whitespace only." }],
+          isError: true,
+        };
+      }
+
+      if (cleanTitle.length > 200) {
+        return {
+          content: [{ type: "text" as const, text: "Title must be 200 characters or fewer." }],
+          isError: true,
+        };
+      }
+
+      const filePath = generateNotePath(cleanTitle);
       const now = new Date();
 
       // Build frontmatter
       const frontmatter = [
         "---",
-        `title: "${title.replace(/"/g, '\\"')}"`,
+        `title: "${cleanTitle.replace(/"/g, '\\"')}"`,
         `date: ${now.toISOString().split("T")[0]}`,
         `captured: ${now.toISOString()}`,
       ];
 
       if (tags && tags.length > 0) {
-        frontmatter.push(`tags: [${tags.map((t) => `"${t}"`).join(", ")}]`);
+        const cleanTags = tags.map((t) => t.trim()).filter((t) => t.length > 0);
+        if (cleanTags.length > 0) {
+          frontmatter.push(`tags: [${cleanTags.map((t) => `"${t}"`).join(", ")}]`);
+        }
       }
 
       if (source) {
-        frontmatter.push(`source: "${source.replace(/"/g, '\\"')}"`);
+        const cleanSource = source.trim();
+        if (cleanSource.length > 0) {
+          frontmatter.push(`source: "${cleanSource.replace(/"/g, '\\"')}"`);
+        }
       }
 
       frontmatter.push("---", "");
 
-      const fullContent = frontmatter.join("\n") + content;
-      const commitMessage = `learned: ${title}`;
+      const fullContent = frontmatter.join("\n") + cleanContent;
+      const commitMessage = `learned: ${cleanTitle}`;
 
       try {
         const result = await createOrUpdateFile(
