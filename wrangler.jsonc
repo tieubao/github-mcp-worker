@@ -1,0 +1,8 @@
+{
+  "name": "github-mcp-worker",
+  "account_id": "1d2a860fec3c4021476a6cea9ae7d56e",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true }
+}
