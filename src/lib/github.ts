@@ -161,3 +161,72 @@ export async function listMarkdownFiles(
     .filter((entry) => !prefix || entry.path.startsWith(prefix))
     .sort((a, b) => a.path.localeCompare(b.path));
 }
+
+/**
+ * Create or update a binary file (base64 encoded) in the repo.
+ */
+export async function createOrUpdateBinaryFile(
+  env: GitHubEnv,
+  filePath: string,
+  base64Content: string,
+  commitMessage: string
+): Promise<GitHubFileResult> {
+  const { GITHUB_PAT, GITHUB_OWNER, GITHUB_REPO } = env;
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+
+  let existingSha: string | undefined;
+  const checkResp = await fetch(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "github-mcp-worker/1.0",
+    },
+  });
+
+  checkRateLimit(checkResp);
+
+  if (checkResp.ok) {
+    const existing = (await checkResp.json()) as { sha: string };
+    existingSha = existing.sha;
+  } else if (checkResp.status !== 404) {
+    const errText = await checkResp.text();
+    throw new Error(`GitHub API error checking file (${checkResp.status}): ${errText}`);
+  }
+
+  const body: Record<string, string> = {
+    message: commitMessage,
+    content: base64Content,
+  };
+
+  if (existingSha) {
+    body.sha = existingSha;
+  }
+
+  const resp = await fetch(apiUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "github-mcp-worker/1.0",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  checkRateLimit(resp);
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`GitHub API error creating file (${resp.status}): ${errText}`);
+  }
+
+  const result = (await resp.json()) as {
+    content: { path: string; html_url: string; sha: string };
+  };
+
+  return {
+    path: result.content.path,
+    htmlUrl: result.content.html_url,
+    sha: result.content.sha,
+  };
+}
