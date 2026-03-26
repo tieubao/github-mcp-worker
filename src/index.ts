@@ -5,6 +5,8 @@ import { registerListNotes } from "./tools/list-notes.js";
 import { registerUpdateIndex } from "./tools/update-index.js";
 import { registerPushImage } from "./tools/push-image.js";
 
+const VERSION = "1.1.0";
+
 interface Env {
   GITHUB_PAT: string;
   GITHUB_OWNER: string;
@@ -29,7 +31,7 @@ function withCors(response: Response): Response {
 function createServer(env: Env): McpServer {
   const server = new McpServer({
     name: "github-learned",
-    version: "1.0.0",
+    version: VERSION,
   });
 
   registerPushNote(server, env);
@@ -66,9 +68,18 @@ export default {
       return withCors(response);
     }
 
+    if (url.pathname === "/version") {
+      return withCors(
+        new Response(JSON.stringify({ version: VERSION }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+    }
+
     if (url.pathname === "/") {
       return withCors(
-        new Response("github-mcp-worker is running. Connect to /mcp", { status: 200 })
+        new Response(`github-mcp-worker v${VERSION}. Connect to /mcp`, { status: 200 })
       );
     }
 
