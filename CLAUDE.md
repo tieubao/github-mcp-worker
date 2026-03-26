@@ -2,7 +2,7 @@
 
 ## What this is
 
-A Cloudflare Worker that acts as a remote MCP server, exposing a `push_note` tool that commits markdown files to a GitHub repo via the GitHub Contents API. This closes the iOS gap in Han's PKM pipeline: Claude iOS can only use cloud MCP servers, and this Worker is that cloud MCP server.
+A Cloudflare Worker that acts as a remote MCP server, exposing tools (`push_note`, `list_notes`, `update_index`) that commit markdown files to a GitHub repo via the GitHub Contents API. The repo is an Obsidian vault organized by topic. Images are handled externally (uploaded to R2 by the knowledge capture skill). This closes the iOS gap in Han's PKM pipeline: Claude iOS can only use cloud MCP servers, and this Worker is that cloud MCP server.
 
 ## Problem it solves
 
@@ -24,7 +24,8 @@ See `docs/decisions/` for full ADRs. Key choices:
 1. **Authless MCP + GitHub PAT as Worker secret** (not OAuth). This is a single-user personal tool, not a multi-tenant service. PAT stored via `wrangler secret put GITHUB_PAT`.
 2. **`createMcpHandler` (stateless)** over `McpAgent` (stateful). No session state needed. Each tool call is independent.
 3. **Streamable HTTP** transport at `/mcp` endpoint. SSE is deprecated. Claude.ai custom connectors support Streamable HTTP.
-4. **Single tool MVP**: `push_note` only. `list_notes` and `update_index` are parking lot items.
+4. **Four tools**: `push_note`, `list_notes`, `update_index`, `push_image`.
+5. **Optional bearer token auth** via `AUTH_TOKEN` secret for abuse prevention.
 
 ## Repo structure
 
@@ -38,9 +39,11 @@ github-mcp-worker/
   .gitignore
   .env.example                   # Required secrets documentation
   src/
-    index.ts                     # Worker entry point + MCP handler
+    index.ts                     # Worker entry point + MCP handler + auth + CORS
     tools/
       push-note.ts               # push_note tool implementation
+      list-notes.ts              # list_notes tool implementation
+      update-index.ts            # update_index tool implementation
     lib/
       github.ts                  # GitHub Contents API client
       slug.ts                    # Title to slug conversion
@@ -81,6 +84,10 @@ npx wrangler secret put GITHUB_REPO
 # Set GitHub username
 npx wrangler secret put GITHUB_OWNER
 # Value: your GitHub username
+
+# Optional: Set auth token for abuse prevention
+npx wrangler secret put AUTH_TOKEN
+# Value: any random string (e.g., generate with `openssl rand -hex 32`)
 ```
 
 ## Environment variables / secrets
@@ -90,6 +97,7 @@ npx wrangler secret put GITHUB_OWNER
 | `GITHUB_PAT` | secret | GitHub Personal Access Token with `repo` scope |
 | `GITHUB_OWNER` | secret | GitHub username (repo owner) |
 | `GITHUB_REPO` | secret | Repository name (e.g., `learned`) |
+| `AUTH_TOKEN` | secret (optional) | Bearer token for request auth. When set, all requests must include `Authorization: Bearer <token>` |
 
 ## Code conventions
 
