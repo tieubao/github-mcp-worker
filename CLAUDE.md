@@ -2,7 +2,7 @@
 
 ## What this is
 
-A Cloudflare Worker that acts as a remote MCP server, exposing a `push_note` tool that commits markdown files to a GitHub repo via the GitHub Contents API. This closes the iOS gap in Han's PKM pipeline: Claude iOS can only use cloud MCP servers, and this Worker is that cloud MCP server.
+A Cloudflare Worker that acts as a remote MCP server, exposing tools (`push_note`, `list_notes`, `update_index`) that commit markdown files to a GitHub repo via the GitHub Contents API. The repo is an Obsidian vault organized by topic. Images are handled externally (uploaded to R2 by the knowledge capture skill). This closes the iOS gap in Han's PKM pipeline: Claude iOS can only use cloud MCP servers, and this Worker is that cloud MCP server.
 
 ## Problem it solves
 
@@ -44,7 +44,6 @@ github-mcp-worker/
       push-note.ts               # push_note tool implementation
       list-notes.ts              # list_notes tool implementation
       update-index.ts            # update_index tool implementation
-      push-image.ts              # push_image tool implementation
     lib/
       github.ts                  # GitHub Contents API client
       slug.ts                    # Title to slug conversion

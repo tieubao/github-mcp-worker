@@ -10,13 +10,17 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
   server.tool(
     "push_note",
     "Push a learned note (markdown) to the GitHub knowledge repo. " +
-      "Creates a new file at YYYY/MM/YYYY-MM-DD-slug.md with frontmatter. " +
-      "Use this to capture learnings, decisions, insights, or any knowledge worth preserving.",
+      "Creates a file at {topic}/{slug}.md with frontmatter. " +
+      "The repo is an Obsidian vault organized by topic.",
     {
       title: z
         .string()
         .min(1)
         .describe("Short descriptive title for the note (used in filename and frontmatter)"),
+      topic: z
+        .string()
+        .min(1)
+        .describe("Topic folder for the note, e.g. 'mcp', 'cloudflare', 'go', 'finance'"),
       content: z
         .string()
         .min(1)
@@ -30,14 +34,21 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
         .optional()
         .describe("Optional source context, e.g. 'Claude iOS session on PKM pipeline'"),
     },
-    async ({ title, content, tags, source }) => {
-      // Sanitize inputs
+    async ({ title, topic, content, tags, source }) => {
       const cleanTitle = title.trim();
+      const cleanTopic = topic.trim();
       const cleanContent = content.trim();
 
       if (cleanTitle.length === 0) {
         return {
           content: [{ type: "text" as const, text: "Title cannot be empty or whitespace only." }],
+          isError: true,
+        };
+      }
+
+      if (cleanTopic.length === 0) {
+        return {
+          content: [{ type: "text" as const, text: "Topic cannot be empty or whitespace only." }],
           isError: true,
         };
       }
@@ -56,7 +67,7 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
         };
       }
 
-      const filePath = generateNotePath(cleanTitle);
+      const filePath = generateNotePath(cleanTopic, cleanTitle);
       const now = new Date();
 
       // Build frontmatter

@@ -17,9 +17,10 @@
 - [x] Add CORS headers for MCP Inspector and cross-origin testing
 
 ## Phase 3: Enhancements (implemented)
-- [x] list_notes tool -- list recent notes from repo via GitHub Trees API
-- [x] update_index tool -- rebuild README.md with auto-generated note index
-- [x] push_image tool -- commit base64 images to assets/ directory
+- [x] list_notes tool -- list notes by topic via GitHub Trees API
+- [x] update_index tool -- rebuild README.md with auto-generated topic index
+- [x] Redesign path structure for Obsidian vault (topic-based: {topic}/{slug}.md)
+- [x] Remove push_image (images go to R2 externally)
 
 ## Parking Lot (discussed but deferred)
 - Notion MCP dual-write -- deferred because it splits the knowledge base

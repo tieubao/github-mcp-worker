@@ -3,7 +3,6 @@ import { createMcpHandler } from "agents/mcp";
 import { registerPushNote } from "./tools/push-note.js";
 import { registerListNotes } from "./tools/list-notes.js";
 import { registerUpdateIndex } from "./tools/update-index.js";
-import { registerPushImage } from "./tools/push-image.js";
 
 interface Env {
   GITHUB_PAT: string;
@@ -35,7 +34,6 @@ function createServer(env: Env): McpServer {
   registerPushNote(server, env);
   registerListNotes(server, env);
   registerUpdateIndex(server, env);
-  registerPushImage(server, env);
 
   return server;
 }

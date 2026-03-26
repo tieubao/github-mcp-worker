@@ -1,11 +1,11 @@
 /**
- * Convert a title string into a URL/filename-safe slug.
+ * Convert a string into a URL/filename-safe slug.
  *
  * "SDD Framework Landscape" -> "sdd-framework-landscape"
  * "How Ito's Lemma Works (Finance)" -> "how-itos-lemma-works-finance"
  */
-export function slugify(title: string): string {
-  return title
+export function slugify(text: string): string {
+  return text
     .toLowerCase()
     .replace(/['']/g, "") // Remove apostrophes
     .replace(/[^a-z0-9]+/g, "-") // Non-alphanumeric -> dash
@@ -14,16 +14,12 @@ export function slugify(title: string): string {
 }
 
 /**
- * Generate the full file path for a learned note.
- * Format: YYYY/MM/YYYY-MM-DD-slug.md
+ * Generate the file path for a note: {topic}/{slug}.md
  *
- * Example: 2026/03/2026-03-26-sdd-framework-landscape.md
+ * Example: "mcp", "Streamable HTTP Transport" -> "mcp/streamable-http-transport.md"
  */
-export function generateNotePath(title: string, date?: Date): string {
-  const d = date ?? new Date();
-  const yyyy = d.getUTCFullYear();
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  const slug = slugify(title);
-  return `${yyyy}/${mm}/${yyyy}-${mm}-${dd}-${slug}.md`;
+export function generateNotePath(topic: string, title: string): string {
+  const topicSlug = slugify(topic);
+  const titleSlug = slugify(title);
+  return `${topicSlug}/${titleSlug}.md`;
 }

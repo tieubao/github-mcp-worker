@@ -9,14 +9,14 @@ export function registerListNotes(server: McpServer, env: GitHubEnv): void {
   server.tool(
     "list_notes",
     "List learned notes from the GitHub knowledge repo. " +
-      "Returns markdown file paths sorted by date (newest first). " +
-      "Optionally filter by year/month prefix.",
+      "Returns markdown file paths grouped by topic folder. " +
+      "Optionally filter by topic name.",
     {
-      prefix: z
+      topic: z
         .string()
         .optional()
         .describe(
-          "Optional path prefix to filter notes, e.g. '2026' for all 2026 notes or '2026/03' for March 2026"
+          "Optional topic folder to filter, e.g. 'mcp' or 'cloudflare'"
         ),
       limit: z
         .number()
@@ -25,15 +25,16 @@ export function registerListNotes(server: McpServer, env: GitHubEnv): void {
         .optional()
         .describe("Maximum number of notes to return (default 20, max 100)"),
     },
-    async ({ prefix, limit }) => {
+    async ({ topic, limit }) => {
       const maxResults = limit ?? 20;
 
       try {
+        const prefix = topic?.trim() ? `${topic.trim()}/` : undefined;
         const files = await listMarkdownFiles(env, prefix);
         const limited = files.slice(0, maxResults);
 
         if (limited.length === 0) {
-          const scope = prefix ? ` matching prefix "${prefix}"` : "";
+          const scope = topic ? ` in topic "${topic}"` : "";
           return {
             content: [
               {
