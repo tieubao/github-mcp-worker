@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1] - 2026-03-26
+
+### Fixed
+- Made `topic` optional in `push_note` schema (was required, causing "expected string, received undefined")
+- Falls back to date-based folder (`YYYY/MM`) when topic is omitted
+
 ## [1.1.0] - 2026-03-26
 
 ### Added

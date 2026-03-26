@@ -5,7 +5,7 @@ import { registerListNotes } from "./tools/list-notes.js";
 import { registerUpdateIndex } from "./tools/update-index.js";
 import { registerPushImage } from "./tools/push-image.js";
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.1";
 
 interface Env {
   GITHUB_PAT: string;

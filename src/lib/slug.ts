@@ -16,10 +16,14 @@ export function slugify(text: string): string {
 /**
  * Generate the file path for a note: {topic}/{slug}.md
  *
+ * Topic can be a simple name ("mcp") or a date path ("2026/03").
+ * Simple names get slugified; paths with "/" are kept as-is.
+ *
  * Example: "mcp", "Streamable HTTP Transport" -> "mcp/streamable-http-transport.md"
+ * Example: "2026/03", "My Note" -> "2026/03/my-note.md"
  */
 export function generateNotePath(topic: string, title: string): string {
-  const topicSlug = slugify(topic);
+  const topicPath = topic.includes("/") ? topic : slugify(topic);
   const titleSlug = slugify(title);
-  return `${topicSlug}/${titleSlug}.md`;
+  return `${topicPath}/${titleSlug}.md`;
 }

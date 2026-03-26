@@ -19,8 +19,8 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
         .describe("Short descriptive title for the note (used in filename and frontmatter)"),
       topic: z
         .string()
-        .min(1)
-        .describe("Topic folder for the note, e.g. 'mcp', 'cloudflare', 'go', 'finance'"),
+        .optional()
+        .describe("Optional topic folder, e.g. 'mcp', 'cloudflare', 'go'. Falls back to date-based folder (YYYY/MM) if omitted."),
       content: z
         .string()
         .min(1)
@@ -36,19 +36,13 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
     },
     async ({ title, topic, content, tags, source }) => {
       const cleanTitle = title.trim();
-      const cleanTopic = topic.trim();
       const cleanContent = content.trim();
+      const now = new Date();
+      const cleanTopic = topic?.trim() || `${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
       if (cleanTitle.length === 0) {
         return {
           content: [{ type: "text" as const, text: "Title cannot be empty or whitespace only." }],
-          isError: true,
-        };
-      }
-
-      if (cleanTopic.length === 0) {
-        return {
-          content: [{ type: "text" as const, text: "Topic cannot be empty or whitespace only." }],
           isError: true,
         };
       }
@@ -68,7 +62,6 @@ export function registerPushNote(server: McpServer, env: GitHubEnv): void {
       }
 
       const filePath = generateNotePath(cleanTopic, cleanTitle);
-      const now = new Date();
 
       // Build frontmatter
       const frontmatter = [
