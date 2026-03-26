@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2] - 2026-03-26
+
+### Fixed
+- `list_notes` broken due to hardcoded `main` branch in Git Trees API call
+- Now fetches the repo's actual default branch dynamically
+
 ## [1.1.1] - 2026-03-26
 
 ### Fixed

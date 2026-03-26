@@ -127,6 +127,32 @@ export interface GitHubTreeEntry {
 }
 
 /**
+ * Get the default branch name for the repo.
+ */
+async function getDefaultBranch(env: GitHubEnv): Promise<string> {
+  const { GITHUB_PAT, GITHUB_OWNER, GITHUB_REPO } = env;
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
+
+  const resp = await fetch(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "github-mcp-worker/1.0",
+    },
+  });
+
+  checkRateLimit(resp);
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`GitHub API error fetching repo info (${resp.status}): ${errText}`);
+  }
+
+  const data = (await resp.json()) as { default_branch: string };
+  return data.default_branch;
+}
+
+/**
  * List markdown files in the repo using the Git Trees API (recursive).
  * Returns entries sorted by path (alphabetical by topic, then filename).
  */
@@ -136,7 +162,8 @@ export async function listMarkdownFiles(
 ): Promise<GitHubTreeEntry[]> {
   const { GITHUB_PAT, GITHUB_OWNER, GITHUB_REPO } = env;
 
-  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/main?recursive=1`;
+  const branch = await getDefaultBranch(env);
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${branch}?recursive=1`;
 
   const resp = await fetch(apiUrl, {
     headers: {
