@@ -190,6 +190,65 @@ export async function listMarkdownFiles(
 }
 
 /**
+ * Delete a file from the target GitHub repository.
+ * Uses DELETE /repos/{owner}/{repo}/contents/{path}
+ * Requires the file's current SHA.
+ */
+export async function deleteFile(
+  env: GitHubEnv,
+  filePath: string,
+  commitMessage: string
+): Promise<{ path: string }> {
+  const { GITHUB_PAT, GITHUB_OWNER, GITHUB_REPO } = env;
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+
+  // Get current SHA (required for deletion)
+  const checkResp = await fetch(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "github-mcp-worker/1.0",
+    },
+  });
+
+  checkRateLimit(checkResp);
+
+  if (checkResp.status === 404) {
+    throw new Error(`File not found: ${filePath}`);
+  }
+
+  if (!checkResp.ok) {
+    const errText = await checkResp.text();
+    throw new Error(`GitHub API error checking file (${checkResp.status}): ${errText}`);
+  }
+
+  const existing = (await checkResp.json()) as { sha: string };
+
+  const resp = await fetch(apiUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "github-mcp-worker/1.0",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: commitMessage,
+      sha: existing.sha,
+    }),
+  });
+
+  checkRateLimit(resp);
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`GitHub API error deleting file (${resp.status}): ${errText}`);
+  }
+
+  return { path: filePath };
+}
+
+/**
  * Create or update a binary file (base64 encoded) in the repo.
  */
 export async function createOrUpdateBinaryFile(

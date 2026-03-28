@@ -4,6 +4,7 @@ import { registerPushNote } from "./tools/push-note.js";
 import { registerListNotes } from "./tools/list-notes.js";
 import { registerUpdateIndex } from "./tools/update-index.js";
 import { registerPushImage } from "./tools/push-image.js";
+import { registerDeleteNote } from "./tools/delete-note.js";
 
 const VERSION = "1.1.2";
 
@@ -38,6 +39,7 @@ function createServer(env: Env): McpServer {
   registerListNotes(server, env);
   registerUpdateIndex(server, env);
   registerPushImage(server, env);
+  registerDeleteNote(server, env);
 
   return server;
 }
