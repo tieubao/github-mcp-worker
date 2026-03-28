@@ -8,20 +8,20 @@ Claude on macOS can push files to GitHub via bash. Claude on iOS cannot. This Wo
 
 ## How it works
 
-```
-Claude iOS/Web → MCP tool call → Cloudflare Worker → GitHub Contents API → Obsidian vault repo
-                                                                           (topic-based folders)
-Images: knowledge capture skill → R2 → referenced via URL in markdown
-```
+![Architecture diagram](docs/architecture.svg)
 
 ## Tools
 
 | Tool | Description |
 |------|-------------|
 | `push_note` | Push a markdown note with frontmatter to `{topic}/{slug}.md` |
-| `list_notes` | List notes from the repo, optionally filtered by topic |
-| `update_index` | Rebuild `README.md` with an auto-generated index grouped by topic |
+| `push_skill` | Push a SKILL.md (+ extra files) to `dwarvesf/claude-skills` with secret scanning |
 | `push_image` | Push a base64 image to `assets/{topic}/{slug}.ext` |
+| `read_note` | Fetch a note's content by path (for review before updating) |
+| `search_notes` | Keyword search across notes via GitHub Code Search API |
+| `list_notes` | List notes from the repo, optionally filtered by topic |
+| `delete_note` | Delete a note by path |
+| `update_index` | Rebuild `README.md` with an auto-generated index grouped by topic |
 
 ## Vault structure
 
@@ -60,6 +60,15 @@ Then add `https://github-mcp-worker.<subdomain>.workers.dev/mcp` as a custom con
 npx wrangler dev
 # Test at http://localhost:8787/mcp with MCP Inspector
 ```
+
+## Tests
+
+```bash
+npm test          # vitest run (32 tests)
+npm run test:watch  # vitest watch mode
+```
+
+Covers slug generation and secret scanning (detection + false positive handling).
 
 ## Tech stack
 

@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#6B7280"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#3B82F6"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="#FAFAFA" rx="8"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-size="16" font-weight="600" fill="#111827">github-mcp-worker architecture</text>
+
+  <!-- Claude Clients Group -->
+  <rect x="30" y="60" width="180" height="200" rx="12" fill="none" stroke="#E5E7EB" stroke-dasharray="6 3"/>
+  <text x="120" y="82" text-anchor="middle" font-size="11" fill="#9CA3AF" font-weight="500">CLAUDE CLIENTS</text>
+
+  <!-- Claude iOS -->
+  <rect x="50" y="96" width="140" height="44" rx="8" fill="#EFF6FF" stroke="#BFDBFE" filter="url(#shadow)"/>
+  <text x="120" y="118" text-anchor="middle" font-size="12" fill="#1E40AF" font-weight="500">Claude iOS</text>
+  <text x="120" y="132" text-anchor="middle" font-size="9" fill="#60A5FA">MCP connector</text>
+
+  <!-- Claude Web -->
+  <rect x="50" y="150" width="140" height="44" rx="8" fill="#EFF6FF" stroke="#BFDBFE" filter="url(#shadow)"/>
+  <text x="120" y="172" text-anchor="middle" font-size="12" fill="#1E40AF" font-weight="500">Claude.ai Web</text>
+  <text x="120" y="186" text-anchor="middle" font-size="9" fill="#60A5FA">MCP connector</text>
+
+  <!-- Claude Code -->
+  <rect x="50" y="204" width="140" height="44" rx="8" fill="#EFF6FF" stroke="#BFDBFE" filter="url(#shadow)"/>
+  <text x="120" y="226" text-anchor="middle" font-size="12" fill="#1E40AF" font-weight="500">Claude Code</text>
+  <text x="120" y="240" text-anchor="middle" font-size="9" fill="#60A5FA">MCP connector</text>
+
+  <!-- Arrow: Clients to Worker -->
+  <line x1="210" y1="170" x2="295" y2="170" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="252" y="162" text-anchor="middle" font-size="9" fill="#3B82F6">MCP</text>
+
+  <!-- Cloudflare Worker -->
+  <rect x="305" y="80" width="260" height="240" rx="12" fill="#FFF7ED" stroke="#FED7AA" filter="url(#shadow)"/>
+  <text x="435" y="104" text-anchor="middle" font-size="13" font-weight="600" fill="#92400E">Cloudflare Worker</text>
+  <text x="435" y="118" text-anchor="middle" font-size="9" fill="#D97706">/mcp endpoint  ·  Streamable HTTP</text>
+
+  <!-- Tools inside worker -->
+  <rect x="320" y="132" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="374" y="151" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">push_note</text>
+
+  <rect x="440" y="132" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="494" y="151" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">push_skill</text>
+
+  <rect x="320" y="170" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="374" y="189" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">read_note</text>
+
+  <rect x="440" y="170" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="494" y="189" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">search_notes</text>
+
+  <rect x="320" y="208" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="374" y="227" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">list_notes</text>
+
+  <rect x="440" y="208" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="494" y="227" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">delete_note</text>
+
+  <rect x="320" y="246" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="374" y="265" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">push_image</text>
+
+  <rect x="440" y="246" width="108" height="30" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+  <text x="494" y="265" text-anchor="middle" font-size="10" fill="#92400E" font-weight="500">update_index</text>
+
+  <!-- Secret scanner label -->
+  <rect x="345" y="286" width="180" height="22" rx="4" fill="#FEE2E2" stroke="#FECACA"/>
+  <text x="435" y="301" text-anchor="middle" font-size="9" fill="#991B1B" font-weight="500">secret scanner (push_skill)</text>
+
+  <!-- GitHub -->
+  <rect x="640" y="80" width="230" height="160" rx="12" fill="none" stroke="#E5E7EB" stroke-dasharray="6 3"/>
+  <text x="755" y="102" text-anchor="middle" font-size="11" fill="#9CA3AF" font-weight="500">GITHUB</text>
+
+  <!-- Knowledge repo -->
+  <rect x="655" y="112" width="200" height="48" rx="8" fill="#F0FDF4" stroke="#BBF7D0" filter="url(#shadow)"/>
+  <text x="755" y="134" text-anchor="middle" font-size="12" fill="#166534" font-weight="500">tieubao/til</text>
+  <text x="755" y="150" text-anchor="middle" font-size="9" fill="#4ADE80">Obsidian vault  ·  topic folders</text>
+
+  <!-- Skills repo -->
+  <rect x="655" y="172" width="200" height="48" rx="8" fill="#F0FDF4" stroke="#BBF7D0" filter="url(#shadow)"/>
+  <text x="755" y="194" text-anchor="middle" font-size="12" fill="#166534" font-weight="500">dwarvesf/claude-skills</text>
+  <text x="755" y="210" text-anchor="middle" font-size="9" fill="#4ADE80">skills/name/SKILL.md</text>
+
+  <!-- Arrows: Worker to GitHub -->
+  <line x1="565" y1="150" x2="645" y2="136" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="565" y1="200" x2="645" y2="196" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Labels on arrows -->
+  <text x="604" y="132" text-anchor="middle" font-size="8" fill="#6B7280">Contents API</text>
+  <text x="604" y="210" text-anchor="middle" font-size="8" fill="#6B7280">Contents API</text>
+
+  <!-- Obsidian (local) -->
+  <rect x="655" y="260" width="200" height="48" rx="8" fill="#FAF5FF" stroke="#E9D5FF" filter="url(#shadow)"/>
+  <text x="755" y="282" text-anchor="middle" font-size="12" fill="#6B21A8" font-weight="500">Obsidian (local)</text>
+  <text x="755" y="298" text-anchor="middle" font-size="9" fill="#A855F7">git pull  ·  search  ·  browse</text>
+
+  <!-- Arrow: GitHub to Obsidian -->
+  <line x1="755" y1="240" x2="755" y2="250" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Data flow legend -->
+  <rect x="30" y="360" width="840" height="140" rx="10" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <text x="450" y="384" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">Data flow</text>
+
+  <!-- Flow 1: Push note -->
+  <circle cx="60" cy="410" r="6" fill="#3B82F6"/>
+  <text x="76" y="414" font-size="10" fill="#374151" font-weight="500">Push note:</text>
+  <text x="142" y="414" font-size="10" fill="#6B7280">Claude calls push_note(title, content, topic, tags) -> Worker builds frontmatter -> GitHub commit -> topic/slug.md</text>
+
+  <!-- Flow 2: Push skill -->
+  <circle cx="60" cy="436" r="6" fill="#F59E0B"/>
+  <text x="76" y="440" font-size="10" fill="#374151" font-weight="500">Push skill:</text>
+  <text x="142" y="440" font-size="10" fill="#6B7280">Claude calls push_skill(name, content) -> secret scan -> GitHub commit to dwarvesf/claude-skills -> skills/name/SKILL.md</text>
+
+  <!-- Flow 3: Search -->
+  <circle cx="60" cy="462" r="6" fill="#10B981"/>
+  <text x="76" y="466" font-size="10" fill="#374151" font-weight="500">Search:</text>
+  <text x="126" y="466" font-size="10" fill="#6B7280">Claude calls search_notes(query) -> GitHub Code Search API -> matching paths with text snippets</text>
+
+  <!-- Flow 4: Read -->
+  <circle cx="60" cy="488" r="6" fill="#8B5CF6"/>
+  <text x="76" y="492" font-size="10" fill="#374151" font-weight="500">Read:</text>
+  <text x="114" y="492" font-size="10" fill="#6B7280">Claude calls read_note(path) -> GitHub Contents API -> decoded markdown content (useful before updating a note)</text>
+</svg>
