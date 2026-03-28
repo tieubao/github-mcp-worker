@@ -5,8 +5,11 @@ import { registerListNotes } from "./tools/list-notes.js";
 import { registerUpdateIndex } from "./tools/update-index.js";
 import { registerPushImage } from "./tools/push-image.js";
 import { registerDeleteNote } from "./tools/delete-note.js";
+import { registerPushSkill } from "./tools/push-skill.js";
+import { registerReadNote } from "./tools/read-note.js";
+import { registerSearchNotes } from "./tools/search-notes.js";
 
-const VERSION = "1.1.2";
+const VERSION = "1.2.0";
 
 interface Env {
   GITHUB_PAT: string;
@@ -40,6 +43,9 @@ function createServer(env: Env): McpServer {
   registerUpdateIndex(server, env);
   registerPushImage(server, env);
   registerDeleteNote(server, env);
+  registerReadNote(server, env);
+  registerSearchNotes(server, env);
+  registerPushSkill(server, env);
 
   return server;
 }
