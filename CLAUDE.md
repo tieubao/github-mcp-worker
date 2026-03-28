@@ -24,7 +24,7 @@ See `docs/decisions/` for full ADRs. Key choices:
 1. **Authless MCP + GitHub PAT as Worker secret** (not OAuth). This is a single-user personal tool, not a multi-tenant service. PAT stored via `wrangler secret put GITHUB_PAT`.
 2. **`createMcpHandler` (stateless)** over `McpAgent` (stateful). No session state needed. Each tool call is independent.
 3. **Streamable HTTP** transport at `/mcp` endpoint. SSE is deprecated. Claude.ai custom connectors support Streamable HTTP.
-4. **Four tools**: `push_note`, `list_notes`, `update_index`, `push_image`.
+4. **Eight tools**: `push_note`, `push_skill`, `push_image`, `read_note`, `search_notes`, `list_notes`, `delete_note`, `update_index`.
 5. **Optional bearer token auth** via `AUTH_TOKEN` secret for abuse prevention.
 
 ## Repo structure
@@ -42,7 +42,12 @@ github-mcp-worker/
     index.ts                     # Worker entry point + MCP handler + auth + CORS
     tools/
       push-note.ts               # push_note tool implementation
+      push-skill.ts              # push_skill tool (commits to dwarvesf/claude-skills)
+      push-image.ts              # push_image tool (binary images to assets/)
+      read-note.ts               # read_note tool (fetch note content by path)
+      search-notes.ts            # search_notes tool (keyword search via GitHub Search API)
       list-notes.ts              # list_notes tool implementation
+      delete-note.ts             # delete_note tool implementation
       update-index.ts            # update_index tool implementation
     lib/
       github.ts                  # GitHub Contents API client

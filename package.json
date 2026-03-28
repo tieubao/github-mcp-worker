@@ -1,12 +1,14 @@
 {
   "name": "github-mcp-worker",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "private": true,
   "description": "Cloudflare Worker MCP server for pushing knowledge notes to GitHub",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "agents": "^0.8.6",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250312.0",
     "typescript": "^5.7.0",
+    "vitest": "^4.1.2",
     "wrangler": "^4.0.0"
   }
 }

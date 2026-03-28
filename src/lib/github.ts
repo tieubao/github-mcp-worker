@@ -48,32 +48,35 @@ export async function createOrUpdateFile(
   env: GitHubEnv,
   filePath: string,
   content: string,
-  commitMessage: string
+  commitMessage: string,
+  knownSha?: string
 ): Promise<GitHubFileResult> {
   const { GITHUB_PAT, GITHUB_OWNER, GITHUB_REPO } = env;
 
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
 
-  // Check if the file already exists (to get its SHA for update)
-  let existingSha: string | undefined;
-  const checkResp = await fetch(apiUrl, {
-    headers: {
-      Authorization: `Bearer ${GITHUB_PAT}`,
-      Accept: "application/vnd.github.v3+json",
-      "User-Agent": "github-mcp-worker/1.0",
-    },
-  });
+  // Use provided SHA if caller already checked, otherwise fetch it
+  let existingSha: string | undefined = knownSha;
+  if (!knownSha) {
+    const checkResp = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${GITHUB_PAT}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "github-mcp-worker/1.0",
+      },
+    });
 
-  checkRateLimit(checkResp);
+    checkRateLimit(checkResp);
 
-  if (checkResp.ok) {
-    const existing = (await checkResp.json()) as { sha: string };
-    existingSha = existing.sha;
-  } else if (checkResp.status !== 404) {
-    const errText = await checkResp.text();
-    throw new Error(
-      `GitHub API error checking file existence (${checkResp.status}): ${errText}`
-    );
+    if (checkResp.ok) {
+      const existing = (await checkResp.json()) as { sha: string };
+      existingSha = existing.sha;
+    } else if (checkResp.status !== 404) {
+      const errText = await checkResp.text();
+      throw new Error(
+        `GitHub API error checking file existence (${checkResp.status}): ${errText}`
+      );
+    }
   }
 
   // Base64 encode the content
